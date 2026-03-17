@@ -9,11 +9,25 @@ package BillTrackPack;
  * @author Marvin
  */
 
+import java.util.Scanner;
+
+
+class HTMLpull
+{
+    static String baseURL = "https://m.flsenate.gov/Bill/";
+
+    public static void elementRetrieve(String bn) 
+    {
+        String billYear = bn.concat("/2026");
+        String billURL = baseURL.concat(billYear);
+    }
+}
+
 public class BillTracker 
 {
 
     public static void main(String[] args) 
     {
-        System.out.println("Hello World!");
+        Scanner input = new Scanner(System.in);
     }
 }
