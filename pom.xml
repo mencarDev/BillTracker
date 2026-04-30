@@ -9,4 +9,11 @@
         <maven.compiler.release>21</maven.compiler.release>
         <exec.mainClass>BillTrackPack.BillTracker</exec.mainClass>
     </properties>
+        <dependencies>
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.17.2</version>
+        </dependency>
+    </dependencies>
 </project>

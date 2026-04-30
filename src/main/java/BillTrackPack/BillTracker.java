@@ -1,75 +1,95 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- */
-
 package BillTrackPack;
 
-/**
- *
- * @author Marvin
- */
-import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Scanner;
 
-public class BillTracker 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+
+
+public class BillTracker
 {
     static String baseURL = "https://m.flsenate.gov/Bill/"; //A string that represents the base URL for bill search
     static String billNum; //A String that will be assigned the bill number
-    static String billURL; //A string that will represent the URL for the desired bill
+    static String billStringURL; //A string that will represent the URL for the desired bill
+    static URL billUrl; //A URL object for the bill's url on the Florida senate website
 
-    //A method that concatenates the bill number with the bill year and concatenates the result to the baseURL to create a string for the URL
-    public static void URLGenerate(String bn) 
+    public static void URLGenerate(String bn) throws IOException
     {
         String billYear = bn.concat("/2026");
-        billURL = baseURL.concat(billYear);
+        billStringURL = baseURL.concat(billYear);
+        billUrl = new URL(billStringURL);
     }
 
-    //A method that turns the URL string into a URL object and opens a connection to the URL to extract the contents of the underlying HTML, building a String of those contents
-    public static String getHTML(String urlString) throws IOException
+    public static void parseBillData(String html)
     {
-        StringBuilder htmlContent = new StringBuilder();
-        URL url = new URL(billURL);
-        URLConnection connection = url.openConnection();
+        Document doc = Jsoup.parse(html);
 
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream())))
+        Element billNumberE1 = doc.selectFirst("h1.bill-number");
+        String billNumber = (billNumberE1 != null) ? billNumberE1.text() : "N/A";
+
+        Element billName = doc.selectFirst(".bill-title");
+        String billNameText = (billName != null) ? billName.text() : "N/A";
+
+        Element sponsorE1 = doc.selectFirst("a[href^=/Senators/]");
+        String sponsor = (sponsorE1 != null) ? sponsorE1.text() : "N/A";
+
+        System.out.println("Bill Number: " + billNumber);
+        System.out.println("Bill Name: " + billNameText);
+        System.out.println("Sponsor: " + sponsor);
+    }
+    
+    public static void textFileCreate(URL bu) throws IOException
+    {
+        URLConnection connection = billUrl.openConnection();
         {
-            String line;
-            while ((line = reader.readLine()) != null)
+            File file = new File("billHTML.txt");
+            FileWriter writer = new FileWriter(file);
+            StringBuilder webcontent = new StringBuilder();
+
+            try (Scanner input = new Scanner(connection.getInputStream()))
             {
-                htmlContent.append(line);
+                while (input.hasNextLine())
+                {
+                    String line = input.nextLine();
+                    webcontent.append(line);
+                    System.out.println(line);
+                }
             }
-        }
-        catch (Exception e)
-        {
-            System.out.println("An unexpected error has ocurred");
-        }
+            catch (Exception e)
+            {
+                System.out.println("An unexpected error has ocurred");
+            }
 
-        return htmlContent.toString();
+            writer.write(webcontent.toString());
+            writer.close();
 
+            parseBillData(webcontent.toString());
+        };
     }
 
-
-    public static void main(String[] args) 
+    public static void main(String[] args)
     {
         Scanner input = new Scanner(System.in);
 
         System.out.println("Please enter the desired bill number");
         
         billNum = input.next();
-        URLGenerate(billNum);
         
         try
         {
-            String html = getHTML(billURL);
-            System.out.println(html);
+            URLGenerate(billNum);
+            textFileCreate(billUrl);
         }
         catch (IOException e)
         {
-            e.printStackTrace();
+            System.out.println("An unexpected error has ocurred");
         }
     }
+
 }
