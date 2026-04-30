@@ -29,16 +29,33 @@ public class BillTracker
     public static void parseBillData(String html)
     {
         Document doc = Jsoup.parse(html);
+        String sponsor;
 
-        Element billName = doc.selectFirst(".bill-title");
+        Element originChamber = doc.selectFirst("title");
+        String chamber = (originChamber != null) ? originChamber.text().trim().split(" ")[0] : "N/A";
+
+        Element billName = doc.selectFirst("h1");
         String billNameText = (billName != null) ? billName.text() : "N/A";
 
-        Element sponsorE1 = doc.selectFirst("a[href^=/Senators/]");
-        String sponsor = (sponsorE1 != null) ? sponsorE1.text() : "N/A";
-
-        System.out.println("Bill Number: " + billNum);
-        System.out.println("Bill Name: " + billNameText);
-        System.out.println("Sponsor: " + sponsor);
+        System.out.println("Bill Number: " + billNameText.substring(0, billNameText.indexOf(":") + 1).trim());
+        System.out.println("Bill Name: " + billNameText.substring(billNameText.indexOf(":") + 1).trim());
+        
+        if (chamber.equals("Senate"))
+        {
+            Element sponsorE1 = doc.selectFirst("a[href^=/Senators/]");
+            sponsor = (sponsorE1 != null) ? sponsorE1.text() : "N/A";
+            System.out.println("Bill Sponsor: Sen. " + sponsor);
+        }
+        else if (chamber.equals("House"))
+        {
+            Element sponsorE2 = doc.selectFirst("p:contains(GENERAL BILL by) span");
+            sponsor = (sponsorE2 != null) ? sponsorE2.text() : "N/A";
+            System.out.println("Bill Sponsor: Rep. " + sponsor);
+        }
+        else
+        {
+            sponsor = "N/A";
+        }
     }
     
     public static void textFileCreate(URL bu) throws IOException
@@ -55,7 +72,7 @@ public class BillTracker
                 {
                     String line = input.nextLine();
                     webcontent.append(line);
-                    System.out.println(line);
+                    //System.out.println(line);
                 }
             }
             catch (Exception e)
