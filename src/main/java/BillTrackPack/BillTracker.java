@@ -30,16 +30,13 @@ public class BillTracker
     {
         Document doc = Jsoup.parse(html);
 
-        Element billNumberE1 = doc.selectFirst("h1.bill-number");
-        String billNumber = (billNumberE1 != null) ? billNumberE1.text() : "N/A";
-
         Element billName = doc.selectFirst(".bill-title");
         String billNameText = (billName != null) ? billName.text() : "N/A";
 
         Element sponsorE1 = doc.selectFirst("a[href^=/Senators/]");
         String sponsor = (sponsorE1 != null) ? sponsorE1.text() : "N/A";
 
-        System.out.println("Bill Number: " + billNumber);
+        System.out.println("Bill Number: " + billNum);
         System.out.println("Bill Name: " + billNameText);
         System.out.println("Sponsor: " + sponsor);
     }
