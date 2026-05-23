@@ -1,19 +1,67 @@
 package BillTrackPack;
 
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.text.PlainDocument;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+class ReportBuilder
+{
+    static File newReport;
 
-public class InputOutput
+    public static void buildNewReport(ArrayList<Bill> b ) throws IOException
+    {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH-mm-ss");
+
+
+        String reportName = "Report-" + LocalDateTime.now().format(formatter).toString() + ".txt";
+        newReport = new File(reportName);
+
+        FileWriter writer = new FileWriter(newReport, true);
+        BufferedWriter bWriter = new BufferedWriter(writer);
+
+        for (int i = 0; i < b.size() ; i++)
+        {
+            Bill currentBill = b.get(i);
+
+            String billPrefix = currentBill.getPrefix();
+            String billNumber = currentBill.getNumber();
+            String billName = currentBill.getName();
+            String SponsorTitle = currentBill.getTitle();
+            String billSponsor = currentBill.getSponsor();
+
+            bWriter.write(billPrefix + billNumber);
+            bWriter.newLine();
+            bWriter.write(billName);
+            bWriter.newLine();
+            bWriter.write(SponsorTitle + " " + billSponsor);
+            bWriter.newLine();
+            bWriter.newLine();
+
+        }
+        bWriter.close();
+    }
+}
+
+class input
 {
     static String baseURL = "https://m.flsenate.gov/Bill/"; //A string that represents the base URL for bill search
     static String billNum; //A String that will be assigned the bill number
@@ -76,6 +124,7 @@ public class InputOutput
 
         Bill bill = new Bill(billPrefix, billNumber, billNam, sponsorTitle, billSponsor);
         Bills.add(bill);
+
     }
     
     public static void textFileCreate(URL bu) throws IOException
@@ -106,55 +155,57 @@ public class InputOutput
             parseBillData(webcontent.toString());
         };
     }
+}
 
-    public static void generateReport() throws IOException
+public class ConsolidatedBillTracker
+{
+    static ArrayList<String> billsTracked = new ArrayList<>();
+    static JFrame frame = new JFrame("Florida Bill Track");
+    static JPanel panel1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    static JTextField tf_entry = new JTextField(25);
+    static JButton genReport = new JButton("Generate Report");
+    //static JScrollPane scrollPane = new JScrollPane();
+    static PlainDocument doc = (PlainDocument) tf_entry.getDocument();
+    
+
+    public static void main(String[] args) 
     {
+        doc.setDocumentFilter(new TextfieldFilter());
 
-    }
+        genReport.addActionListener(e -> {
+            String inputText = tf_entry.getText().trim();
+            if (!inputText.isEmpty()) {
+            String[] tokens = inputText.split("\\s+");
+            for (String token : tokens)
+            billsTracked.add(token);
+        }
+    tf_entry.setText("");
 
-    public static void main(String[] args)
+    try 
     {
-
-        Scanner input = new Scanner(System.in);
-        ArrayList<String> billsTracked = new ArrayList<>();
-        String specBill = "null";
-            
-
-        System.out.println("Please enter the bill numbers of the bills you would like to track. Enter -1 to stop.");
-
-
-        while (!(specBill.equals("-1")))
-        {
-            specBill = input.next();
-
-            if (specBill.equals("-1"))
-            {
-                break;
-            }
-            else
-            {
-                billsTracked.add(specBill);  
-            }
+        for (int i = 0; i < billsTracked.size(); i++) {
+            input.billNum = billsTracked.get(i);
+            input.URLGenerate(input.billNum);
+            input.textFileCreate(input.billUrl);
         }
+        for (int i = 0; i < input.Bills.size(); i++)
+            input.Bills.get(i).getInfo();
 
+        ReportBuilder.buildNewReport(input.Bills);
+        } 
+        catch (IOException ex) 
+        {
+            System.getLogger(ConsolidatedBillTracker.class.getName()).log(System.Logger.Level.ERROR, "Error generating report", ex);
+        }
+    });
 
-        try
-        {
-            for (int i = 0; i < billsTracked.size(); i++)
-            {
-                URLGenerate(billsTracked.get(i));
-                textFileCreate(billUrl);
-            }
-   
-        }
-        catch (IOException e)
-        {
-            System.out.println("An unexpected error has ocurred");
-        }
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(500, 350);
+        frame.add(panel1, BorderLayout.NORTH);
+        panel1.add(tf_entry);
+        panel1.add(genReport);
+        frame.setVisible(true);
 
-        for (int i = 0; i < Bills.size(); i++)
-        {
-            Bills.get(i).getInfo();
-        }
     }
 }
+

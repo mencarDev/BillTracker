@@ -7,7 +7,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>21</maven.compiler.release>
-        <exec.mainClass>BillTrackPack.BillTracker</exec.mainClass>
+        <exec.mainClass>BillTrackPack.ConsolidatedBillTracker</exec.mainClass>
     </properties>
         <dependencies>
         <dependency>

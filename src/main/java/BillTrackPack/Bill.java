@@ -2,19 +2,28 @@ package BillTrackPack;
 
 public class Bill
 {
+    private String prefix;
     private String number;
     private String name;
+    private String title;
     private String sponsor;
 
     //Constructor
-    public Bill(String no, String na, String spo)
+    public Bill(String p, String no, String na, String t, String spo)
     {
+        prefix = p;
         number = no;
         name = na;
+        title = t;
         sponsor = spo;
     }
 
     //Accessors
+    public String getPrefix()
+    {
+        return prefix;
+    }
+
     public String getNumber()
     {
         return number;
@@ -23,6 +32,11 @@ public class Bill
     public String getName()
     {
         return name;
+    }
+
+    public String getTitle()
+    {
+        return title;
     }
 
     public String getSponsor()
@@ -39,6 +53,11 @@ public class Bill
     }
 
     //Mutators
+    public void setPrefix(String p)
+    {
+        prefix = p;
+    }
+
     public void setNumber(String no)
     {
         number = no;
@@ -47,6 +66,11 @@ public class Bill
     public void setName(String na)
     {
         name = na;
+    }
+
+    public void setTitle(String t)
+    {
+        title = t;
     }
 
     public void setSponsor(String spo)
