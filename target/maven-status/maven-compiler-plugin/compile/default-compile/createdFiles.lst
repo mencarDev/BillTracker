@@ -1,6 +1,10 @@
+BillTrackPack\ConsolidatedBillTracker.class
+BillTrackPack\Bill.class
+BillTrackPack\BillTracker.class
 BillTrackPack\InputOutput.class
 BillTrackPack\TextfieldFilter.class
 BillTrackPack\AppInterface.class
-BillTrackPack\Bill.class
 BillTrackPack\BillInput.class
-BillTrackPack\BillTracker.class
+BillTrackPack\ReportBuilder.class
+BillTrackPack\ReportBuilderNew.class
+BillTrackPack\inputNew.class

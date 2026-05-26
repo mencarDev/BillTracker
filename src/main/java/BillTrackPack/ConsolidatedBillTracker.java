@@ -23,7 +23,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-class ReportBuilder
+class ReportBuilderNew
 {
     static File newReport;
 
@@ -61,7 +61,7 @@ class ReportBuilder
     }
 }
 
-class input
+class inputNew
 {
     static String baseURL = "https://m.flsenate.gov/Bill/"; //A string that represents the base URL for bill search
     static String billNum; //A String that will be assigned the bill number
@@ -184,14 +184,14 @@ public class ConsolidatedBillTracker
     try 
     {
         for (int i = 0; i < billsTracked.size(); i++) {
-            input.billNum = billsTracked.get(i);
-            input.URLGenerate(input.billNum);
-            input.textFileCreate(input.billUrl);
+            inputNew.billNum = billsTracked.get(i);
+            inputNew.URLGenerate(inputNew.billNum);
+            inputNew.textFileCreate(inputNew.billUrl);
         }
-        for (int i = 0; i < input.Bills.size(); i++)
-            input.Bills.get(i).getInfo();
+        for (int i = 0; i < inputNew.Bills.size(); i++)
+            inputNew.Bills.get(i).getInfo();
 
-        ReportBuilder.buildNewReport(input.Bills);
+        ReportBuilderNew.buildNewReport(inputNew.Bills);
         } 
         catch (IOException ex) 
         {

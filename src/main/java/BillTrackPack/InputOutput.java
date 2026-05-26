@@ -114,16 +114,15 @@ public class InputOutput
 
     public static void main(String[] args)
     {
-
-        Scanner input = new Scanner(System.in);
+        //Scanner input = new Scanner(System.in);
         ArrayList<String> billsTracked = new ArrayList<>();
         String specBill = "null";
             
 
-        System.out.println("Please enter the bill numbers of the bills you would like to track. Enter -1 to stop.");
+        //System.out.println("Please enter the bill numbers of the bills you would like to track. Enter -1 to stop.");
 
 
-        while (!(specBill.equals("-1")))
+        /*while (!(specBill.equals("-1")))
         {
             specBill = input.next();
 
@@ -135,26 +134,23 @@ public class InputOutput
             {
                 billsTracked.add(specBill);  
             }
-        }
+        } 
+        */
 
-
-        try
+        try 
         {
-            for (int i = 0; i < billsTracked.size(); i++)
-            {
-                URLGenerate(billsTracked.get(i));
-                textFileCreate(billUrl);
+            for (int i = 0; i < billsTracked.size(); i++) {
+                billNum = billsTracked.get(i);
+                URLGenerate(inputNew.billNum);
+                textFileCreate(inputNew.billUrl);
             }
-   
+            for (int i = 0; i < inputNew.Bills.size(); i++)
+                inputNew.Bills.get(i).getInfo();
+            ReportBuilderNew.buildNewReport(inputNew.Bills);
+            } 
+            catch (IOException ex) 
+            {
+                System.getLogger(ConsolidatedBillTracker.class.getName()).log(System.Logger.Level.ERROR, "Error generating report", ex);
+            }
         }
-        catch (IOException e)
-        {
-            System.out.println("An unexpected error has ocurred");
-        }
-
-        for (int i = 0; i < Bills.size(); i++)
-        {
-            Bills.get(i).getInfo();
-        }
-    }
 }
