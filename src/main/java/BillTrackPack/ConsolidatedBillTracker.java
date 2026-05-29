@@ -17,6 +17,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.filechooser.FileSystemView;
 import javax.swing.text.PlainDocument;
 
 import org.jsoup.Jsoup;
@@ -25,15 +26,17 @@ import org.jsoup.nodes.Element;
 
 class ReportBuilderNew
 {
+    static File documentsFolder = FileSystemView.getFileSystemView().getDefaultDirectory();
     static File newReport;
 
-    public static void buildNewReport(ArrayList<Bill> b ) throws IOException
+    public static void buildNewReport(ArrayList<Bill> b) throws IOException
     {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH-mm-ss");
 
 
         String reportName = "Report-" + LocalDateTime.now().format(formatter).toString() + ".txt";
-        newReport = new File(reportName);
+        String savePath = documentsFolder.getAbsolutePath() + File.separator + reportName;
+        newReport = new File(savePath);
 
         FileWriter writer = new FileWriter(newReport, true);
         BufferedWriter bWriter = new BufferedWriter(writer);
